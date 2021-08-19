@@ -88,7 +88,7 @@ def delete_comments(repo, pull_number):
     pattern = re.compile('^{}'.format(re.escape(header_sub)))
 
     for comment in comments:
-        if comment["user"]["login"] == 'github-actions[bot]' and pattern.match(comment['body']):
+        if comment["user"] == 'github-actions[bot]' and pattern.match(comment['body']):
             delete_comment(repo, comment['id'])
 
 
