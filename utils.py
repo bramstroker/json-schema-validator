@@ -28,7 +28,7 @@ COMMENT = '''
 ```
 {instance}
 ```'''
-
+COMMENT_IDENTIFIER = '<!-- model.json validate action comment -->'
 
 def request(verb, url, data=None):
     headers = {'Authorization': 'Bearer {}'.format(os.getenv('INPUT_TOKEN'))}
@@ -76,8 +76,6 @@ def delete_comment(repo, id):
 
 def delete_comments(repo, pull_number):
     print('clearing comments')
-    user = request('get', AUTHENTICATED_USER)
-    username = jq.compile('.login').input(user).first()
 
     comment_url = ISSUE_COMMENTS.format(repo=repo, issue_number=pull_number)
     comment_response = request('get', comment_url)
@@ -90,7 +88,7 @@ def delete_comments(repo, pull_number):
     pattern = re.compile('^{}'.format(re.escape(header_sub)))
 
     for comment in comments:
-        if comment['user'] == username and pattern.match(comment['body']):
+        if comment["user"]["login"] == 'github-actions[bot]' and pattern.match(comment['body']):
             delete_comment(repo, comment['id'])
 
 
